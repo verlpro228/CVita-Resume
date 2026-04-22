@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <defs>
+    <!-- 渐变背景 -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- 文字渐变 -->
+    <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#667eea" />
+      <stop offset="100%" style="stop-color:#764ba2" />
+    </linearGradient>
+    
+    <!-- 光晕效果 -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- 背景圆形 -->
+  <circle cx="200" cy="180" r="120" fill="url(#bgGradient)" filter="url(#glow)"/>
+  
+  <!-- 文档/简历图标 - 融合C和V字母 -->
+  <g transform="translate(130, 100)">
+    <!-- 纸张主体 - C的变形 -->
+    <path d="M10 20 L10 140 Q10 150 20 150 L70 150 L70 130 Q70 120 60 120 L30 120 L30 100 Q30 90 40 90 L60 90 L60 70 Q60 60 70 60 L70 40 Q70 30 60 30 L20 30 Q10 30 10 20 Z" 
+          fill="white" opacity="0.95"/>
+    
+    <!-- 文字行 - 代表简历内容 -->
+    <rect x="25" y="45" width="35" height="4" rx="2" fill="#667eea"/>
+    <rect x="25" y="55" width="28" height="3" rx="1.5" fill="#a78bfa"/>
+    <rect x="25" y="65" width="32" height="3" rx="1.5" fill="#a78bfa"/>
+    
+    <rect x="25" y="85" width="35" height="4" rx="2" fill="#667eea"/>
+    <rect x="25" y="95" width="25" height="3" rx="1.5" fill="#a78bfa"/>
+    <rect x="25" y="105" width="30" height="3" rx="1.5" fill="#a78bfa"/>
+    
+    <rect x="25" y="125" width="35" height="4" rx="2" fill="#667eea"/>
+    <rect x="25" y="135" width="20" height="3" rx="1.5" fill="#a78bfa"/>
+    
+    <!-- V的变形 - 右侧装饰线条 -->
+    <path d="M85 30 L100 80 L115 30" 
+          stroke="white" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M85 70 L100 120 L115 70" 
+          stroke="white" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/>
+  </g>
+  
+  <!-- 品牌名称 -->
+  <text x="200" y="330" font-family="Arial, Helvetica, sans-serif" font-size="52" font-weight="bold" fill="url(#textGradient)" text-anchor="middle">
+    CVita
+  </text>
+  
+  <!-- 副标题 -->
+  <text x="200" y="360" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#666" text-anchor="middle" letter-spacing="3">
+    CREATE YOUR FUTURE
+  </text>
+</svg>

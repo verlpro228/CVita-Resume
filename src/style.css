@@ -1,0 +1,271 @@
+@tailwind base;
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  width: 100%;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+html {
+  scroll-behavior: smooth;
+  background: #f5f7fb;
+  overflow-x: hidden;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at top left, rgba(206, 228, 255, 0.65), transparent 34rem),
+    linear-gradient(180deg, #fbfcff 0%, #f2f5fa 100%);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
+  color: #111827;
+  font-family: Inter, "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
+  overflow-x: hidden;
+}
+
+#app {
+  background: inherit;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+}
+
+li {
+  list-style: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+::selection {
+  background: rgba(74, 144, 226, 0.22);
+}
+
+.el-message,
+.el-message-box,
+.el-dialog,
+.el-drawer {
+  border-radius: 24px !important;
+}
+
+html.theme-light {
+  color-scheme: light;
+}
+
+html.theme-dark {
+  background: #07111f;
+  color-scheme: dark;
+}
+
+html.theme-dark body {
+  background:
+    radial-gradient(circle at 12% 0%, rgba(37, 99, 235, 0.22), transparent 34rem),
+    radial-gradient(circle at 88% 10%, rgba(14, 165, 233, 0.15), transparent 28rem),
+    linear-gradient(180deg, #07111f 0%, #0d1726 56%, #08111f 100%);
+  color: #e5edf8;
+}
+
+html.theme-dark #app {
+  background: inherit;
+}
+
+html.theme-dark .landing-page,
+html.theme-dark .templates-page,
+html.theme-dark .editor-page,
+html.theme-dark .preview-page {
+  background:
+    radial-gradient(circle at 14% 0%, rgba(59, 130, 246, 0.2), transparent 32%),
+    radial-gradient(circle at 88% 8%, rgba(45, 212, 191, 0.14), transparent 26%),
+    linear-gradient(135deg, #08111f 0%, #0f1a2b 52%, #07111f 100%) !important;
+  color: #e5edf8 !important;
+}
+
+html.theme-dark .product-nav,
+html.theme-dark .editor-topbar,
+html.theme-dark .module-rail,
+html.theme-dark .form-panel,
+html.theme-dark .preview-panel,
+html.theme-dark .mobile-tabs,
+html.theme-dark .preview-topbar,
+html.theme-dark .glass-card,
+html.theme-dark .templates-hero,
+html.theme-dark .template-workspace,
+html.theme-dark .template-card,
+html.theme-dark .flow-card,
+html.theme-dark .faq-item,
+html.theme-dark .landing-footer,
+html.theme-dark .rail-card,
+html.theme-dark .profile-data-card,
+html.theme-dark .profile-layout-options button {
+  border-color: rgba(148, 163, 184, 0.18) !important;
+  background: linear-gradient(145deg, rgba(15, 23, 42, 0.76), rgba(30, 41, 59, 0.46)) !important;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.11) !important;
+}
+
+html.theme-dark .brand,
+html.theme-dark .brand span,
+html.theme-dark .brand-button span,
+html.theme-dark .hero-copy h1,
+html.theme-dark .section-heading h2,
+html.theme-dark .showcase-copy h3,
+html.theme-dark .flow-card strong,
+html.theme-dark .faq-item strong,
+html.theme-dark .panel-title h1,
+html.theme-dark .item-head strong,
+html.theme-dark .preview-topbar strong,
+html.theme-dark .template-info h3,
+html.theme-dark .row-heading strong {
+  color: #f8fafc !important;
+}
+
+html.theme-dark .hero-copy p,
+html.theme-dark .section-heading p,
+html.theme-dark .showcase-copy p,
+html.theme-dark .flow-card p,
+html.theme-dark .faq-answer,
+html.theme-dark .template-info p,
+html.theme-dark .title-input span,
+html.theme-dark .panel-title span,
+html.theme-dark .preview-toolbar span,
+html.theme-dark .rail-head span,
+html.theme-dark .field span,
+html.theme-dark .preview-topbar span {
+  color: #9fb0c7 !important;
+}
+
+html.theme-dark .rail-card-head,
+html.theme-dark .control-field b,
+html.theme-dark .toggle-line span,
+html.theme-dark .profile-layout-panel h2,
+html.theme-dark .profile-data-head {
+  color: #e5edf8 !important;
+}
+
+html.theme-dark .control-field > span {
+  color: #9fb0c7 !important;
+}
+
+html.theme-dark nav a,
+html.theme-dark nav button,
+html.theme-dark .toolbar-actions button,
+html.theme-dark .actions button,
+html.theme-dark .secondary-btn,
+html.theme-dark .github-hero,
+html.theme-dark .footer-actions button,
+html.theme-dark .template-trigger,
+html.theme-dark .module-main,
+html.theme-dark .module-name,
+html.theme-dark .add-section button,
+html.theme-dark .danger-zone button,
+html.theme-dark .add-item,
+html.theme-dark .ai-inline,
+html.theme-dark .ai-mini,
+html.theme-dark .zoom-control button,
+html.theme-dark .github-action,
+html.theme-dark .github-btn {
+  border-color: rgba(148, 163, 184, 0.22) !important;
+  background: rgba(15, 23, 42, 0.54) !important;
+  color: #e5edf8 !important;
+}
+
+html.theme-dark .primary-btn,
+html.theme-dark .toolbar-actions .primary,
+html.theme-dark .actions .primary,
+html.theme-dark .footer-actions .primary {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+  color: #fff !important;
+  box-shadow: 0 16px 34px rgba(37, 99, 235, 0.28) !important;
+}
+
+html.theme-dark nav a:hover,
+html.theme-dark nav button:hover,
+html.theme-dark nav .router-link-active,
+html.theme-dark .template-option:hover,
+html.theme-dark .toolbar-actions .export-option:hover {
+  background: rgba(59, 130, 246, 0.18) !important;
+  color: #bfdbfe !important;
+}
+
+html.theme-dark .title-input,
+html.theme-dark .field input,
+html.theme-dark .field textarea,
+html.theme-dark .field select,
+html.theme-dark .add-section select,
+html.theme-dark .template-menu,
+html.theme-dark .export-menu,
+html.theme-dark .module-item,
+html.theme-dark .item-card,
+html.theme-dark .empty-box,
+html.theme-dark .switch-row,
+html.theme-dark .ai-loading,
+html.theme-dark .ai-result,
+html.theme-dark .zoom-control {
+  border-color: rgba(148, 163, 184, 0.2) !important;
+  background: rgba(15, 23, 42, 0.52) !important;
+  color: #e5edf8 !important;
+}
+
+html.theme-dark .control-field select,
+html.theme-dark .control-field input[type='number'],
+html.theme-dark .rail-card-head button,
+html.theme-dark .profile-data-head button {
+  border-color: rgba(148, 163, 184, 0.22) !important;
+  background: rgba(15, 23, 42, 0.58) !important;
+  color: #e5edf8 !important;
+}
+
+html.theme-dark input,
+html.theme-dark textarea,
+html.theme-dark select {
+  color: #e5edf8 !important;
+}
+
+html.theme-dark input::placeholder,
+html.theme-dark textarea::placeholder {
+  color: #64748b !important;
+}
+
+html.theme-dark .preview-scroll {
+  background: rgba(2, 6, 23, 0.45) !important;
+}
+
+html.theme-dark .save-chip {
+  background: rgba(6, 78, 59, 0.42) !important;
+  color: #86efac !important;
+}
+
+html.theme-dark .save-chip.saving {
+  background: rgba(124, 45, 18, 0.42) !important;
+  color: #fdba74 !important;
+}

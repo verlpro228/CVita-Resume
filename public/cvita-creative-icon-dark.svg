@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <!-- 深紫色渐变 -->
+    <linearGradient id="darkPurpleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4338ca;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#5b21b6;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- 深紫色渐变2 -->
+    <linearGradient id="darkPurpleGradient2" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#6d28d9;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4c1d95;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- 外圈 - 象征世界/机会 -->
+  <circle cx="100" cy="100" r="90" 
+          stroke="url(#darkPurpleGradient)" 
+          stroke-width="4" 
+          fill="none" 
+          stroke-dasharray="10 5"
+          opacity="0.4"/>
+  
+  <!-- 中心圆 - 象征核心/个人 -->
+  <circle cx="100" cy="100" r="40" 
+          fill="url(#darkPurpleGradient)" 
+          opacity="0.2"/>
+  
+  <!-- 主形状 - 上升的阶梯/简历 -->
+  <g transform="translate(100, 100)">
+    <!-- 第一层 - 底部 -->
+    <rect x="-55" y="25" width="45" height="10" rx="5" 
+          fill="url(#darkPurpleGradient)"/>
+    
+    <!-- 第二层 -->
+    <rect x="-35" y="5" width="55" height="10" rx="5" 
+          fill="url(#darkPurpleGradient)"/>
+    
+    <!-- 第三层 -->
+    <rect x="-15" y="-15" width="65" height="10" rx="5" 
+          fill="url(#darkPurpleGradient)"/>
+    
+    <!-- 第四层 - 顶部 -->
+    <rect x="5" y="-35" width="55" height="10" rx="5" 
+          fill="url(#darkPurpleGradient)"/>
+  </g>
+  
+  <!-- 上升箭头/光芒 -->
+  <path d="M100 50 L100 25 M88 37 L100 25 L112 37" 
+        stroke="url(#darkPurpleGradient)" 
+        stroke-width="4" 
+        fill="none" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"/>
+  
+  <!-- 装饰点 - 象征机会/可能性 -->
+  <circle cx="50" cy="50" r="5" fill="url(#darkPurpleGradient2)"/>
+  <circle cx="150" cy="55" r="4" fill="url(#darkPurpleGradient2)"/>
+  <circle cx="55" cy="145" r="4" fill="url(#darkPurpleGradient2)"/>
+  <circle cx="155" cy="150" r="6" fill="url(#darkPurpleGradient2)"/>
+  
+  <!-- 装饰线 -->
+  <line x1="165" y1="75" x2="180" y2="60" stroke="url(#darkPurpleGradient)" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+  <line x1="170" y1="85" x2="185" y2="70" stroke="url(#darkPurpleGradient)" stroke-width="3" stroke-linecap="round" opacity="0.4"/>
+</svg>
