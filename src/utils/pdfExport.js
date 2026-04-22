@@ -18,6 +18,7 @@ export const exportResumePaperToPdf = async ({ paper, html2canvas, jsPDF, filena
 
   const wrapper = document.createElement('div')
   const clone = paper.cloneNode(true)
+  clone.classList.add('pdf-export-mode')
   const paperWidth = paper.offsetWidth || 794
   const pageRatio = 297 / 210
   const singlePageHeight = Math.round(paperWidth * pageRatio)
@@ -43,24 +44,86 @@ export const exportResumePaperToPdf = async ({ paper, html2canvas, jsPDF, filena
     boxShadow: 'none'
   })
 
-  clone.querySelectorAll('.avatar, .avatar img').forEach((node) => {
+  const exportStyle = document.createElement('style')
+  exportStyle.textContent = `
+    .pdf-export-mode .avatar {
+      width: 78px !important;
+      height: 78px !important;
+      min-width: 78px !important;
+      max-width: 78px !important;
+      flex: 0 0 78px !important;
+      aspect-ratio: 1 / 1 !important;
+      position: relative !important;
+      display: block !important;
+      overflow: hidden !important;
+      border-radius: 999px !important;
+      clip-path: none !important;
+    }
+
+    .pdf-export-mode .avatar img {
+      position: absolute !important;
+      inset: 0 !important;
+      display: block !important;
+      width: 100% !important;
+      height: 100% !important;
+      max-width: none !important;
+      max-height: none !important;
+      min-width: 100% !important;
+      min-height: 100% !important;
+      object-fit: cover !important;
+      object-position: center center !important;
+      border-radius: inherit !important;
+    }
+
+    .pdf-export-mode .contacts,
+    .pdf-export-mode .contact-item,
+    .pdf-export-mode .contact-item b {
+      overflow: visible !important;
+    }
+
+    .pdf-export-mode .contact-item b {
+      white-space: normal !important;
+      text-overflow: clip !important;
+      overflow-wrap: anywhere !important;
+      word-break: break-word !important;
+      line-height: 1.32 !important;
+    }
+  `
+
+  clone.querySelectorAll('.avatar').forEach((node) => {
     Object.assign(node.style, {
-      borderRadius: '50%',
+      width: '78px',
+      height: '78px',
+      minWidth: '78px',
+      maxWidth: '78px',
+      flex: '0 0 78px',
+      aspectRatio: '1 / 1',
+      position: 'relative',
+      display: 'block',
+      borderRadius: '999px',
       overflow: 'hidden',
-      clipPath: 'circle(50% at 50% 50%)'
+      clipPath: 'none'
     })
   })
 
   clone.querySelectorAll('.avatar img').forEach((node) => {
     Object.assign(node.style, {
+      position: 'absolute',
+      inset: '0',
       display: 'block',
       width: '100%',
       height: '100%',
+      maxWidth: 'none',
+      maxHeight: 'none',
+      minWidth: '100%',
+      minHeight: '100%',
       objectFit: 'cover',
-      objectPosition: 'center center'
+      objectPosition: 'center center',
+      borderRadius: 'inherit'
     })
   })
 
+  wrapper.appendChild(exportStyle)
   wrapper.appendChild(clone)
   document.body.appendChild(wrapper)
 

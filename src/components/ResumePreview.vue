@@ -236,17 +236,22 @@ const getItemSubtitle = (type, item) => {
 
 .resume-header {
   display: grid;
-  grid-template-columns: minmax(250px, 1fr) minmax(280px, 0.92fr);
+  grid-template-columns: minmax(290px, 0.94fr) minmax(330px, 1.06fr);
   align-items: center;
-  gap: 26px;
+  gap: 22px;
   padding-bottom: 26px;
   border-bottom: 3px solid var(--accent);
 }
 
 .identity {
+  min-width: 0;
   display: flex;
   align-items: center;
   gap: 18px;
+
+  > div:last-child {
+    min-width: 0;
+  }
 
   h1 {
     margin: 0;
@@ -268,7 +273,12 @@ const getItemSubtitle = (type, item) => {
 .avatar {
   width: 78px;
   height: 78px;
+  min-width: 78px;
+  max-width: 78px;
   flex: 0 0 78px;
+  aspect-ratio: 1 / 1;
+  position: relative;
+  display: block;
   overflow: hidden;
   border-radius: 50%;
   border: 3px solid rgba(0, 0, 0, 0.08);
@@ -276,8 +286,12 @@ const getItemSubtitle = (type, item) => {
   background: #f8fafc;
 
   img {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
+    max-width: none;
+    max-height: none;
     display: block;
     object-fit: cover;
     object-position: center center;
@@ -286,36 +300,46 @@ const getItemSubtitle = (type, item) => {
 }
 
 .contacts {
-  min-width: 280px;
+  width: 100%;
+  max-width: 370px;
+  min-width: 0;
+  justify-self: end;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px 18px;
-  align-items: center;
+  gap: 7px 14px;
+  align-items: start;
   color: #4b5563;
-  font-size: 12px;
-  word-break: break-all;
+  font-size: 11.5px;
 }
 
 .contact-item {
   min-width: 0;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
+  display: grid;
+  grid-template-columns: 13px minmax(0, 1fr);
+  align-items: start;
+  gap: 5px;
   color: #1f2937;
-  line-height: 1.25;
+  line-height: 1.32;
+  overflow: visible;
 
   svg {
     flex: 0 0 13px;
+    width: 13px;
+    height: 13px;
+    margin-top: 1px;
     color: #111827;
   }
 
   b {
+    display: block;
     min-width: 0;
-    overflow: hidden;
+    overflow: visible;
     color: #374151;
     font-weight: 520;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    text-overflow: clip;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
 }
 
