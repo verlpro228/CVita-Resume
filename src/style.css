@@ -269,3 +269,413 @@ html.theme-dark .save-chip.saving {
   background: rgba(124, 45, 18, 0.42) !important;
   color: #fdba74 !important;
 }
+
+html.theme-dark {
+  --dark-page: #07111f;
+  --dark-page-soft: #0d1726;
+  --dark-panel: rgba(15, 23, 42, 0.78);
+  --dark-panel-soft: rgba(30, 41, 59, 0.56);
+  --dark-panel-hover: rgba(51, 65, 85, 0.62);
+  --dark-border: rgba(148, 163, 184, 0.22);
+  --dark-border-strong: rgba(191, 219, 254, 0.34);
+  --dark-text: #eaf2ff;
+  --dark-muted: #a8b6ca;
+  --dark-subtle: #7f8da3;
+  --dark-accent: #60a5fa;
+  --dark-accent-soft: rgba(96, 165, 250, 0.18);
+  --dark-shadow: 0 26px 78px rgba(0, 0, 0, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+html.theme-dark * {
+  scrollbar-color: rgba(148, 163, 184, 0.48) rgba(15, 23, 42, 0.48);
+}
+
+html.theme-dark ::selection {
+  background: rgba(96, 165, 250, 0.36);
+  color: #f8fafc;
+}
+
+html.theme-dark .product-nav {
+  border-color: rgba(191, 219, 254, 0.2) !important;
+  background:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.72), rgba(15, 23, 42, 0.46)),
+    radial-gradient(circle at 18% 0%, rgba(96, 165, 250, 0.18), transparent 42%) !important;
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+}
+
+html.theme-dark .product-nav .brand img,
+html.theme-dark .editor-topbar .brand-button img {
+  filter: drop-shadow(0 8px 16px rgba(96, 165, 250, 0.22));
+}
+
+html.theme-dark .product-nav .menu-btn span {
+  background: #eaf2ff !important;
+}
+
+html.theme-dark .product-nav nav.open {
+  border-color: var(--dark-border) !important;
+  background: rgba(15, 23, 42, 0.92) !important;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.46) !important;
+}
+
+html.theme-dark .product-badge,
+html.theme-dark .trust-row span,
+html.theme-dark .tag-list span,
+html.theme-dark .flow-card span,
+html.theme-dark .template-info > div:first-child span,
+html.theme-dark .section-heading > span,
+html.theme-dark .rail-head strong,
+html.theme-dark .ai-label {
+  color: #93c5fd !important;
+}
+
+html.theme-dark .glass-btn,
+html.theme-dark .product-badge,
+html.theme-dark .trust-row span,
+html.theme-dark .showcase-points button,
+html.theme-dark .filter-row button,
+html.theme-dark .template-actions button,
+html.theme-dark .template-choice,
+html.theme-dark .upload-button,
+html.theme-dark .avatar-row button,
+html.theme-dark .item-head button,
+html.theme-dark .module-tools button,
+html.theme-dark .profile-data-head button,
+html.theme-dark .rail-card-head button {
+  border-color: var(--dark-border) !important;
+  background: rgba(15, 23, 42, 0.58) !important;
+  color: var(--dark-text) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+}
+
+html.theme-dark .glass-card:hover,
+html.theme-dark .showcase-points button:hover,
+html.theme-dark .showcase-points button.active,
+html.theme-dark .filter-row button:hover,
+html.theme-dark .filter-row button.active,
+html.theme-dark .template-actions button:hover,
+html.theme-dark .template-choice:hover,
+html.theme-dark .module-tools button:hover,
+html.theme-dark .profile-layout-options button:hover {
+  border-color: var(--dark-border-strong) !important;
+  background: rgba(30, 41, 59, 0.72) !important;
+  box-shadow: 0 22px 58px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.13) !important;
+}
+
+html.theme-dark .glass-card::before {
+  background: linear-gradient(115deg, transparent 16%, rgba(147, 197, 253, 0.18) 42%, transparent 68%) !important;
+}
+
+html.theme-dark .showcase-copy .product-badge {
+  color: #bfdbfe !important;
+}
+
+html.theme-dark .showcase-points small,
+html.theme-dark .template-choice small,
+html.theme-dark .empty-box p,
+html.theme-dark .ai-hint,
+html.theme-dark .landing-footer span,
+html.theme-dark .mock-top strong,
+html.theme-dark .tag-list span {
+  color: var(--dark-muted) !important;
+}
+
+html.theme-dark .showcase-points span,
+html.theme-dark .faq-item button,
+html.theme-dark .faq-item button span,
+html.theme-dark .template-actions button,
+html.theme-dark .toolbar-actions .export-option,
+html.theme-dark .template-option {
+  color: var(--dark-text) !important;
+}
+
+html.theme-dark .showcase-visual,
+html.theme-dark .mock-editor,
+html.theme-dark .editor-visual-card,
+html.theme-dark .preview-wrap {
+  border: 1px solid var(--dark-border) !important;
+  background:
+    linear-gradient(140deg, rgba(15, 23, 42, 0.78), rgba(30, 41, 59, 0.54)),
+    repeating-linear-gradient(35deg, rgba(147, 197, 253, 0.04), rgba(147, 197, 253, 0.04) 14px, transparent 14px, transparent 52px) !important;
+  box-shadow: var(--dark-shadow) !important;
+}
+
+html.theme-dark .mock-top {
+  border-color: rgba(148, 163, 184, 0.18) !important;
+}
+
+html.theme-dark .mock-top span,
+html.theme-dark .mock-sidebar i,
+html.theme-dark .mock-form b,
+html.theme-dark .mock-form i,
+html.theme-dark .editor-mini-sidebar span,
+html.theme-dark .editor-mini-sidebar b,
+html.theme-dark .editor-mini-sidebar i,
+html.theme-dark .editor-mini-form span,
+html.theme-dark .editor-mini-form b,
+html.theme-dark .editor-mini-form i {
+  background: rgba(148, 163, 184, 0.2) !important;
+}
+
+html.theme-dark .mock-sidebar,
+html.theme-dark .mock-form,
+html.theme-dark .mock-paper,
+html.theme-dark .editor-mini-sidebar,
+html.theme-dark .editor-mini-form,
+html.theme-dark .editor-mini-paper,
+html.theme-dark .ai-visual-card,
+html.theme-dark .privacy-visual-card i {
+  border: 1px solid rgba(148, 163, 184, 0.18) !important;
+  background: rgba(15, 23, 42, 0.62) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+}
+
+html.theme-dark .ai-visual-card span,
+html.theme-dark .ai-visual-card strong {
+  border-color: #020617 !important;
+  background: rgba(226, 232, 240, 0.92) !important;
+  color: #020617 !important;
+}
+
+html.theme-dark .ai-visual-card i,
+html.theme-dark .ai-visual-card b,
+html.theme-dark .ai-visual-card .ai-progress {
+  background: rgba(148, 163, 184, 0.28) !important;
+}
+
+html.theme-dark .privacy-visual-card strong,
+html.theme-dark .editor-mini-paper,
+html.theme-dark .template-actions .primary,
+html.theme-dark .empty-box button,
+html.theme-dark .add-item,
+html.theme-dark .ai-actions button {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+  color: #fff !important;
+}
+
+html.theme-dark .privacy-visual-card span {
+  background: rgba(148, 163, 184, 0.34) !important;
+}
+
+html.theme-dark .filter-row button.active,
+html.theme-dark .profile-layout-options button.active,
+html.theme-dark .template-choice.active,
+html.theme-dark .module-main.active,
+html.theme-dark .module-item.active,
+html.theme-dark .module-item.drop-target {
+  border-color: rgba(96, 165, 250, 0.48) !important;
+  background: rgba(37, 99, 235, 0.18) !important;
+  box-shadow: 0 18px 44px rgba(37, 99, 235, 0.14), inset 0 0 0 1px rgba(96, 165, 250, 0.18) !important;
+}
+
+html.theme-dark .module-main span,
+html.theme-dark .module-name span {
+  background: rgba(96, 165, 250, 0.18) !important;
+  color: #93c5fd !important;
+}
+
+html.theme-dark .layout-preview i,
+html.theme-dark .layout-preview b,
+html.theme-dark .layout-preview em {
+  background: #eaf2ff !important;
+}
+
+html.theme-dark .drag-handle,
+html.theme-dark .module-tools button,
+html.theme-dark .item-head button,
+html.theme-dark .zoom-control span {
+  color: var(--dark-muted) !important;
+}
+
+html.theme-dark .module-item:hover .drag-handle,
+html.theme-dark .module-item.drop-target .drag-handle {
+  background: rgba(96, 165, 250, 0.16) !important;
+  color: #93c5fd !important;
+}
+
+html.theme-dark .rail-card,
+html.theme-dark .form-card,
+html.theme-dark .profile-layout-panel,
+html.theme-dark .profile-data-card,
+html.theme-dark .empty-box,
+html.theme-dark .item-card {
+  border-color: var(--dark-border) !important;
+  background: rgba(15, 23, 42, 0.48) !important;
+}
+
+html.theme-dark .item-head,
+html.theme-dark .preview-toolbar {
+  border-color: rgba(148, 163, 184, 0.18) !important;
+  background: rgba(15, 23, 42, 0.52) !important;
+}
+
+html.theme-dark .field input:focus,
+html.theme-dark .field textarea:focus,
+html.theme-dark .field select:focus,
+html.theme-dark .title-input:focus-within,
+html.theme-dark .control-field select:focus,
+html.theme-dark .control-field input[type='number']:focus {
+  border-color: rgba(96, 165, 250, 0.72) !important;
+  box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.14) !important;
+}
+
+html.theme-dark select option {
+  background: #0f172a;
+  color: #eaf2ff;
+}
+
+html.theme-dark input[type='range'] {
+  accent-color: #93c5fd !important;
+}
+
+html.theme-dark .toggle-line i {
+  background: rgba(51, 65, 85, 0.86) !important;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.4) !important;
+}
+
+html.theme-dark .toggle-line i::after {
+  background: #eaf2ff !important;
+}
+
+html.theme-dark .toggle-line input:checked + i {
+  background: linear-gradient(135deg, #2563eb, #60a5fa) !important;
+}
+
+html.theme-dark .color-dot {
+  border-color: rgba(226, 232, 240, 0.72) !important;
+  box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.3), 0 8px 18px rgba(0, 0, 0, 0.2) !important;
+}
+
+html.theme-dark .color-dot.active {
+  box-shadow: 0 0 0 3px #0f172a, 0 0 0 5px rgba(147, 197, 253, 0.86), 0 12px 24px rgba(0, 0, 0, 0.34) !important;
+}
+
+html.theme-dark .avatar-box {
+  background: linear-gradient(145deg, #0f172a, #1e3a8a) !important;
+  color: #cbd5e1 !important;
+}
+
+html.theme-dark .template-menu,
+html.theme-dark .export-menu {
+  border-color: var(--dark-border) !important;
+  background:
+    linear-gradient(145deg, rgba(15, 23, 42, 0.94), rgba(30, 41, 59, 0.82)),
+    radial-gradient(circle at 10% 0%, rgba(96, 165, 250, 0.14), transparent 42%) !important;
+  box-shadow: 0 26px 76px rgba(0, 0, 0, 0.48), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+html.theme-dark .template-option:hover,
+html.theme-dark .toolbar-actions .export-option:hover {
+  background: rgba(96, 165, 250, 0.16) !important;
+  color: #bfdbfe !important;
+}
+
+html.theme-dark .template-option.active {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+  color: #fff !important;
+}
+
+html.theme-dark .preview-scroll,
+html.theme-dark .preview-stage {
+  background:
+    radial-gradient(circle at 18% 0%, rgba(96, 165, 250, 0.08), transparent 34%),
+    rgba(2, 6, 23, 0.44) !important;
+}
+
+html.theme-dark .resume-paper {
+  background: #ffffff !important;
+  color: #1f2937 !important;
+  box-shadow: 0 22px 72px rgba(0, 0, 0, 0.48) !important;
+}
+
+html.theme-dark .resume-paper .identity h1,
+html.theme-dark .resume-paper .item-top h3,
+html.theme-dark .resume-paper .description strong {
+  color: #111827 !important;
+}
+
+html.theme-dark .resume-paper .identity p,
+html.theme-dark .resume-paper .resume-section h2,
+html.theme-dark .resume-paper .skill-head strong,
+html.theme-dark .resume-paper .contact-item svg {
+  color: var(--accent) !important;
+}
+
+html.theme-dark .resume-paper .contact-item b,
+html.theme-dark .resume-paper .description,
+html.theme-dark .resume-paper .paragraph,
+html.theme-dark .resume-paper .intro-section p,
+html.theme-dark .resume-paper .item-top p,
+html.theme-dark .resume-paper .item-top span,
+html.theme-dark .resume-paper .skill-desc,
+html.theme-dark .resume-paper .simple-item span {
+  color: #4b5563 !important;
+}
+
+html.theme-dark .template-classic .identity h1,
+html.theme-dark .template-classic .identity p,
+html.theme-dark .template-classic .contacts,
+html.theme-dark .template-classic .contact-item,
+html.theme-dark .template-classic .contact-item svg,
+html.theme-dark .template-classic .contact-item b,
+html.theme-dark .template-creative .identity h1,
+html.theme-dark .template-creative .identity p,
+html.theme-dark .template-creative .contacts,
+html.theme-dark .template-creative .contact-item,
+html.theme-dark .template-creative .contact-item svg,
+html.theme-dark .template-creative .contact-item b {
+  color: #ffffff !important;
+}
+
+html.theme-dark .template-preview-card {
+  background: #ffffff !important;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.24) !important;
+}
+
+html.theme-dark .el-message,
+html.theme-dark .el-message-box,
+html.theme-dark .el-dialog,
+html.theme-dark .el-drawer,
+html.theme-dark .el-popper,
+html.theme-dark .el-select-dropdown,
+html.theme-dark .el-dropdown-menu,
+html.theme-dark .el-picker-panel {
+  border-color: var(--dark-border) !important;
+  background: rgba(15, 23, 42, 0.94) !important;
+  color: var(--dark-text) !important;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.52) !important;
+  backdrop-filter: blur(22px) saturate(150%);
+}
+
+html.theme-dark .el-message__content,
+html.theme-dark .el-message-box__title,
+html.theme-dark .el-message-box__content,
+html.theme-dark .el-dialog__title,
+html.theme-dark .el-drawer__title,
+html.theme-dark .el-form-item__label,
+html.theme-dark .el-select-dropdown__item {
+  color: var(--dark-text) !important;
+}
+
+html.theme-dark .el-select-dropdown__item.hover,
+html.theme-dark .el-select-dropdown__item:hover,
+html.theme-dark .el-dropdown-menu__item:hover {
+  background: rgba(96, 165, 250, 0.16) !important;
+  color: #bfdbfe !important;
+}
+
+html.theme-dark .el-overlay {
+  background-color: rgba(2, 6, 23, 0.62) !important;
+}
+
+html.theme-dark .el-button {
+  border-color: var(--dark-border) !important;
+  background: rgba(15, 23, 42, 0.58) !important;
+  color: var(--dark-text) !important;
+}
+
+html.theme-dark .el-button--primary {
+  border-color: transparent !important;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+  color: #fff !important;
+}
