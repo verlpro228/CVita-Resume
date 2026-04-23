@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="editor-page">
     <header ref="topbarRef" class="editor-topbar">
       <button class="brand-button" type="button" @click="router.push('/')">
@@ -153,6 +153,20 @@
             </label>
           </section>
 
+          <section class="rail-card text-format-card">
+            <div class="rail-card-head">
+              <span>文字样式</span>
+            </div>
+            <div class="text-format-actions">
+              <button type="button" title="加粗" aria-label="加粗" @mousedown.prevent @click="applyBold">
+                <strong>B</strong>
+              </button>
+              <button type="button" title="斜体" aria-label="斜体" @mousedown.prevent @click="applyItalic">
+                <em>I</em>
+              </button>
+            </div>
+          </section>
+
           <section class="rail-card">
             <div class="rail-card-head">
               <span>主题色</span>
@@ -253,7 +267,7 @@
         <span></span>
       </button>
 
-      <section ref="formRef" class="form-panel">
+      <section ref="formRef" class="form-panel" @focusin="rememberTextTarget" @mouseup="rememberTextTarget" @keyup="rememberTextTarget">
         <div class="panel-title">
           <div><span>Resume Editor</span><h1>{{ currentPanelTitle }}</h1></div>
           <button v-if="activePanel === 'basics'" type="button" class="ai-mini" @click="openAi('basicSummary')">AI 润色简介</button>
@@ -544,6 +558,74 @@ const profileLayoutOptions = [
 ]
 
 let saveTimer = null
+
+const activeTextTarget = ref(null)
+const formattableInputTypes = new Set(['text', 'search', 'url', 'tel', 'email'])
+
+const canFormatTextTarget = (target) => {
+  if (!target || typeof target.value !== 'string' || typeof target.selectionStart !== 'number') return false
+  const tag = target.tagName?.toLowerCase()
+  if (tag === 'textarea') return true
+  if (tag !== 'input') return false
+  const type = (target.getAttribute('type') || 'text').toLowerCase()
+  return formattableInputTypes.has(type)
+}
+
+const rememberTextTarget = (event) => {
+  if (canFormatTextTarget(event?.target)) {
+    activeTextTarget.value = event.target
+  }
+}
+
+const getActiveTextTarget = () => {
+  if (activeTextTarget.value?.isConnected && canFormatTextTarget(activeTextTarget.value)) {
+    return activeTextTarget.value
+  }
+  return canFormatTextTarget(document.activeElement) ? document.activeElement : null
+}
+
+const applyInlineMarker = (marker) => {
+  const target = getActiveTextTarget()
+  if (!target) {
+    ElMessage.info('请先选中文本')
+    return
+  }
+
+  const start = target.selectionStart
+  const end = target.selectionEnd
+  if (start === end) {
+    ElMessage.info('请先选中文本')
+    return
+  }
+
+  const value = target.value
+  const hasMarkerBefore = value.slice(start - marker.length, start) === marker
+  const hasMarkerAfter = value.slice(end, end + marker.length) === marker
+  let nextValue = ''
+  let nextStart = start
+  let nextEnd = end
+
+  if (hasMarkerBefore && hasMarkerAfter) {
+    nextValue = `${value.slice(0, start - marker.length)}${value.slice(start, end)}${value.slice(end + marker.length)}`
+    nextStart = start - marker.length
+    nextEnd = end - marker.length
+  } else {
+    nextValue = `${value.slice(0, start)}${marker}${value.slice(start, end)}${marker}${value.slice(end)}`
+    nextStart = start + marker.length
+    nextEnd = end + marker.length
+  }
+
+  target.value = nextValue
+  target.dispatchEvent(new Event('input', { bubbles: true }))
+  nextTick(() => {
+    target.focus()
+    target.setSelectionRange(nextStart, nextEnd)
+  })
+  animatePreview()
+}
+
+const applyBold = () => applyInlineMarker('**')
+const applyItalic = () => applyInlineMarker('_')
 
 const moduleIconMap = {
   education: '教',
@@ -1640,6 +1722,36 @@ button:not(:disabled):hover {
   font-weight: 850;
 }
 
+.text-format-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+
+  button {
+    min-height: 42px;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(214, 224, 240, 0.9);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.78);
+    color: #182235;
+    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+  }
+
+  button:hover,
+  button:focus-visible {
+    transform: translateY(-1px);
+    border-color: rgba(37, 99, 235, 0.44);
+    color: #1d4ed8;
+  }
+
+  strong,
+  em {
+    font-size: 17px;
+    line-height: 1;
+  }
+}
+
 .color-grid {
   display: flex;
   flex-wrap: wrap;
@@ -1981,6 +2093,7 @@ button:not(:disabled):hover {
 }
 
 .field {
+  position: relative;
   display: grid;
   gap: 7px;
 }

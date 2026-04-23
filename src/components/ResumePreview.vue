@@ -24,8 +24,8 @@
               <img :src="resume.basics.avatar" alt="avatar" />
             </div>
             <div>
-              <h1>{{ resume.basics?.name || '姓名' }}</h1>
-              <p>{{ resume.basics?.position || '职位意向' }}</p>
+              <h1 v-html="formatInlineText(resume.basics?.name || '姓名')"></h1>
+              <p v-html="formatInlineText(resume.basics?.position || '职位意向')"></p>
             </div>
           </div>
           <div class="contacts">
@@ -33,65 +33,75 @@
               <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true">
                 <path fill="currentColor" :d="contactIconPaths[item.icon]" />
               </svg>
-              <b>{{ item.value }}</b>
+              <b v-html="formatInlineText(item.value)"></b>
             </span>
           </div>
         </header>
 
         <section v-if="resume.basics?.summary" class="resume-section intro-section">
           <h2>个人简介</h2>
-          <p>{{ resume.basics.summary }}</p>
+          <p v-html="formatInlineText(resume.basics.summary)"></p>
         </section>
 
         <template v-for="section in visibleSections" :key="section.id">
           <section v-if="section.type === 'summary' || section.type === 'custom'" class="resume-section">
-            <h2>{{ section.title }}</h2>
-            <p class="paragraph">{{ section.content }}</p>
+            <h2 v-html="formatInlineText(section.title)"></h2>
+            <p class="paragraph" v-html="formatInlineText(section.content)"></p>
           </section>
 
           <section v-else-if="section.type === 'skills'" class="resume-section">
-            <h2>{{ section.title }}</h2>
+            <h2 v-html="formatInlineText(section.title)"></h2>
             <div class="skill-list">
               <div v-for="item in filledItems(section.items)" :key="item.id" class="skill-item">
                 <div class="skill-head">
-                  <strong>{{ item.name }}</strong>
-                  <span>{{ item.category }}</span>
+                  <strong v-html="formatInlineText(item.name)"></strong>
+                  <span v-html="formatInlineText(item.category)"></span>
                 </div>
                 <div class="skill-track">
                   <i :style="{ width: `${Number(item.level) || 0}%` }"></i>
                 </div>
-                <p v-if="item.description" class="skill-desc">{{ item.description }}</p>
+                <p v-if="item.description" class="skill-desc" v-html="formatInlineText(item.description)"></p>
               </div>
             </div>
           </section>
 
           <section v-else-if="section.type === 'certifications'" class="resume-section">
-            <h2>{{ section.title }}</h2>
+            <h2 v-html="formatInlineText(section.title)"></h2>
             <div class="simple-list">
               <div v-for="item in filledItems(section.items)" :key="item.id" class="simple-item">
-                <strong>{{ item.name }}</strong>
-                <span>{{ joinText([item.issuer, item.level, item.date], ' / ') }}</span>
+                <strong v-html="formatInlineText(item.name)"></strong>
+                <span class="inline-parts">
+                  <template v-for="(part, partIndex) in getCertificationParts(item)" :key="part.field">
+                    <span v-if="partIndex" class="part-separator"> / </span>
+                    <span v-html="formatInlineText(part.value)"></span>
+                  </template>
+                </span>
               </div>
             </div>
           </section>
 
           <section v-else class="resume-section">
-            <h2>{{ section.title }}</h2>
+            <h2 v-html="formatInlineText(section.title)"></h2>
             <div class="timeline">
               <article v-for="item in filledItems(section.items)" :key="item.id" class="timeline-item">
                 <div class="item-top">
                   <div>
-                    <h3>{{ getItemTitle(section.type, item) }}</h3>
-                    <p>{{ getItemSubtitle(section.type, item) }}</p>
+                    <h3 v-html="formatInlineText(getItemTitle(section.type, item))"></h3>
+                    <p v-if="getItemSubtitleParts(section.type, item).length" class="inline-parts">
+                      <template v-for="(part, partIndex) in getItemSubtitleParts(section.type, item)" :key="part.field">
+                        <span v-if="partIndex" class="part-separator"> / </span>
+                        <span v-html="formatInlineText(part.value)"></span>
+                      </template>
+                    </p>
                   </div>
-                  <span>{{ item.period || item.date }}</span>
+                  <span v-html="formatInlineText(item.period || item.date)"></span>
                 </div>
-                <p v-if="item.description" class="description">{{ item.description }}</p>
-                <p v-if="item.courses" class="description"><strong>主修内容：</strong>{{ item.courses }}</p>
-                <p v-if="item.responsibility" class="description"><strong>个人职责：</strong>{{ item.responsibility }}</p>
-                <p v-if="item.result" class="description strong">{{ item.result }}</p>
-                <p v-if="item.highlights" class="description strong">{{ item.highlights }}</p>
-                <a v-if="item.link" class="item-link" :href="item.link" target="_blank" rel="noreferrer">{{ item.link }}</a>
+                <p v-if="item.description" class="description" v-html="formatInlineText(item.description)"></p>
+                <p v-if="item.courses" class="description"><strong>主修内容：</strong><span v-html="formatInlineText(item.courses)"></span></p>
+                <p v-if="item.responsibility" class="description"><strong>个人职责：</strong><span v-html="formatInlineText(item.responsibility)"></span></p>
+                <p v-if="item.result" class="description strong" v-html="formatInlineText(item.result)"></p>
+                <p v-if="item.highlights" class="description strong" v-html="formatInlineText(item.highlights)"></p>
+                <a v-if="item.link" class="item-link" :href="item.link" target="_blank" rel="noreferrer" v-html="formatInlineText(item.link)"></a>
               </article>
             </div>
           </section>
@@ -150,6 +160,17 @@ const previewStyle = computed(() => ({
   '--resume-paragraph-gap': `${themeSettings.value.paragraphGap}px`
 }))
 
+const escapeHtml = (value = '') => String(value)
+  .replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;')
+  .replace(/'/g, '&#39;')
+
+const formatInlineText = (value = '') => escapeHtml(value)
+  .replace(/\*\*([\s\S]+?)\*\*/g, '<strong>$1</strong>')
+  .replace(/(^|[^\w])_([\s\S]+?)_(?!\w)/g, '$1<em>$2</em>')
+
 const contactIconPaths = {
   email: 'M3 5h18v14H3V5Zm2 2v.35l7 4.37 7-4.37V7H5Zm14 10V9.7l-7 4.36L5 9.7V17h14Z',
   phone: 'M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.28-.28.67-.36 1.02-.25 1.12.37 2.32.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1C10.61 21 3 13.39 3 4c0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2Z',
@@ -187,8 +208,6 @@ const filledItems = (items = []) => {
   })
 }
 
-const joinText = (parts, separator = ' / ') => parts.filter(Boolean).join(separator)
-
 const getItemTitle = (type, item) => {
   const map = {
     education: item.school,
@@ -200,16 +219,22 @@ const getItemTitle = (type, item) => {
   return map[type] || item.title || item.name
 }
 
-const getItemSubtitle = (type, item) => {
+const getItemSubtitleParts = (type, item) => {
   const map = {
-    education: joinText([item.major, item.degree]),
-    experience: item.role,
-    projects: joinText([item.role, item.stack]),
-    awards: item.level,
-    campus: item.role
+    education: ['major', 'degree'],
+    experience: ['role'],
+    projects: ['role', 'stack'],
+    awards: ['level'],
+    campus: ['role']
   }
-  return map[type] || item.description || ''
+  return (map[type] || ['description'])
+    .map(field => ({ field, value: item[field] }))
+    .filter(part => part.value)
 }
+
+const getCertificationParts = (item) => ['issuer', 'level', 'date']
+  .map(field => ({ field, value: item[field] }))
+  .filter(part => part.value)
 </script>
 
 <style scoped lang="scss">
@@ -438,6 +463,14 @@ const getItemSubtitle = (type, item) => {
     color: #6b7280;
     font-size: 12px;
   }
+}
+
+.inline-parts {
+  display: inline;
+}
+
+.part-separator {
+  color: currentColor;
 }
 
 .description {

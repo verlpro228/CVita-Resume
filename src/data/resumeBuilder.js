@@ -331,6 +331,7 @@ export const createEmptyResume = (templateId = 'modern') => ({
 export const normalizeResume = (input) => {
   const fallback = createDemoResume()
   const resume = input && typeof input === 'object' ? input : fallback
+  const { textStyles, ...resumeFields } = resume
   const normalizeSection = (section) => {
     const base = createSection(section?.type || 'custom')
     const merged = {
@@ -353,7 +354,7 @@ export const normalizeResume = (input) => {
 
   return {
     ...fallback,
-    ...resume,
+    ...resumeFields,
     basics: {
       ...fallback.basics,
       ...(resume.basics || {})
