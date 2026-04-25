@@ -76,6 +76,7 @@ const goFaq = async () => {
 }
 
 .brand {
+  min-width: 0;
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -97,6 +98,7 @@ const goFaq = async () => {
 }
 
 nav {
+  min-width: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -105,6 +107,7 @@ nav {
 
   a,
   button {
+    max-width: 100%;
     min-height: 38px;
     display: inline-flex;
     align-items: center;
@@ -129,6 +132,7 @@ nav {
 }
 
 .nav-actions {
+  min-width: 0;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -165,6 +169,7 @@ nav {
 }
 
 .primary-btn {
+  max-width: 100%;
   padding: 0 18px;
   border: none;
   background: linear-gradient(135deg, #111827, #263244);

@@ -44,6 +44,31 @@ select {
   font: inherit;
 }
 
+.wrap-safe {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+#app :is(.landing-page, .templates-page, .editor-page, .preview-page, .product-nav) :is(
+  h1,
+  h2,
+  h3,
+  h4,
+  p,
+  span,
+  strong,
+  b,
+  small,
+  em,
+  a,
+  button,
+  label
+) {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
 button {
   -webkit-tap-highlight-color: transparent;
 }

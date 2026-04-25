@@ -51,18 +51,7 @@
 
           <section v-else-if="section.type === 'skills'" class="resume-section">
             <h2 v-html="formatInlineText(section.title)"></h2>
-            <div class="skill-list">
-              <div v-for="item in filledItems(section.items)" :key="item.id" class="skill-item">
-                <div class="skill-head">
-                  <strong v-html="formatInlineText(item.name)"></strong>
-                  <span v-html="formatInlineText(item.category)"></span>
-                </div>
-                <div class="skill-track">
-                  <i :style="{ width: `${Number(item.level) || 0}%` }"></i>
-                </div>
-                <p v-if="item.description" class="skill-desc" v-html="formatInlineText(item.description)"></p>
-              </div>
-            </div>
+            <p class="paragraph skill-paragraph" v-html="formatInlineText(getSkillsContent(section))"></p>
           </section>
 
           <section v-else-if="section.type === 'certifications'" class="resume-section">
@@ -85,16 +74,20 @@
             <div class="timeline">
               <article v-for="item in filledItems(section.items)" :key="item.id" class="timeline-item">
                 <div class="item-top">
-                  <div>
+                  <div class="item-main">
                     <h3 v-html="formatInlineText(getItemTitle(section.type, item))"></h3>
-                    <p v-if="getItemSubtitleParts(section.type, item).length" class="inline-parts">
+                    <p v-if="getItemSubtitleParts(section.type, item).length" class="inline-parts item-subtitle">
                       <template v-for="(part, partIndex) in getItemSubtitleParts(section.type, item)" :key="part.field">
                         <span v-if="partIndex" class="part-separator"> / </span>
                         <span v-html="formatInlineText(part.value)"></span>
                       </template>
                     </p>
                   </div>
-                  <span v-html="formatInlineText(item.period || item.date)"></span>
+                  <span
+                    v-if="getItemPeriod(item)"
+                    class="item-period"
+                    v-html="formatInlineText(getItemPeriod(item))"
+                  ></span>
                 </div>
                 <p v-if="item.description" class="description" v-html="formatInlineText(item.description)"></p>
                 <p v-if="item.courses" class="description"><strong>主修内容：</strong><span v-html="formatInlineText(item.courses)"></span></p>
@@ -146,13 +139,24 @@ const fontFamily = computed(() => {
   return 'Inter, "PingFang SC", "Microsoft YaHei", Arial, sans-serif'
 })
 
+const scaleFontSize = (size) => {
+  const normalizedSize = Number(size) || 0
+  const scale = Number(themeSettings.value.textScale) || 100
+  return `${Number(((normalizedSize * scale) / 100).toFixed(2))}px`
+}
+
 const previewStyle = computed(() => ({
   '--accent': accentColor.value,
   '--font-family': fontFamily.value,
   '--resume-line-height': themeSettings.value.lineHeight,
-  '--resume-base-size': `${themeSettings.value.baseFontSize}px`,
-  '--resume-section-title-size': `${themeSettings.value.sectionTitleSize}px`,
-  '--resume-item-title-size': `${themeSettings.value.itemTitleSize}px`,
+  '--resume-base-size': scaleFontSize(themeSettings.value.baseFontSize),
+  '--resume-section-title-size': scaleFontSize(themeSettings.value.sectionTitleSize),
+  '--resume-item-title-size': scaleFontSize(themeSettings.value.itemTitleSize),
+  '--resume-name-size': scaleFontSize(themeSettings.value.nameFontSize),
+  '--resume-position-size': scaleFontSize(themeSettings.value.positionFontSize),
+  '--resume-contact-size': scaleFontSize(themeSettings.value.contactFontSize),
+  '--resume-meta-size': scaleFontSize(themeSettings.value.metaFontSize),
+  '--resume-link-size': scaleFontSize(themeSettings.value.linkFontSize),
   '--resume-page-padding-x': `${themeSettings.value.pagePaddingX}px`,
   '--resume-page-padding-y': `${themeSettings.value.pagePaddingY}px`,
   '--resume-section-gap': `${themeSettings.value.sectionGap}px`,
@@ -170,6 +174,34 @@ const escapeHtml = (value = '') => String(value)
 const formatInlineText = (value = '') => escapeHtml(value)
   .replace(/\*\*([\s\S]+?)\*\*/g, '<strong>$1</strong>')
   .replace(/(^|[^\w])_([\s\S]+?)_(?!\w)/g, '$1<em>$2</em>')
+
+const normalizeTextValue = (value) => String(value ?? '').trim()
+
+const pickFirstFilled = (...values) => values
+  .map(normalizeTextValue)
+  .find(Boolean) || ''
+
+const joinDateRange = (start, end) => {
+  const normalizedStart = normalizeTextValue(start)
+  const normalizedEnd = normalizeTextValue(end)
+
+  if (normalizedStart && normalizedEnd) return `${normalizedStart} - ${normalizedEnd}`
+  return normalizedStart || normalizedEnd
+}
+
+const getItemPeriod = (item = {}) => pickFirstFilled(
+  item.period,
+  item.date,
+  item.time,
+  item.duration,
+  item.timeRange,
+  item.time_range,
+  item.range,
+  joinDateRange(item.startDate, item.endDate),
+  joinDateRange(item.start, item.end),
+  joinDateRange(item.from, item.to),
+  joinDateRange(item.begin, item.finish)
+)
 
 const contactIconPaths = {
   email: 'M3 5h18v14H3V5Zm2 2v.35l7 4.37 7-4.37V7H5Zm14 10V9.7l-7 4.36L5 9.7V17h14Z',
@@ -199,6 +231,9 @@ const hasSectionContent = (section) => {
   if (section.type === 'summary' || section.type === 'custom') {
     return !!section.content
   }
+  if (section.type === 'skills') {
+    return !!getSkillsContent(section)
+  }
   return filledItems(section.items).length > 0
 }
 
@@ -206,6 +241,22 @@ const filledItems = (items = []) => {
   return items.filter(item => {
     return Object.entries(item).some(([key, value]) => key !== 'id' && value !== '' && value !== null && value !== undefined)
   })
+}
+
+const getSkillsContent = (section = {}) => {
+  const directContent = normalizeTextValue(section.content)
+  if (directContent) return directContent
+
+  return filledItems(section.items)
+    .map((item = {}) => {
+      const title = pickFirstFilled(item.name)
+      const description = pickFirstFilled(item.description, item.category)
+
+      if (title && description && description !== title) return `${title}: ${description}`
+      return title || description
+    })
+    .filter(Boolean)
+    .join('\n')
 }
 
 const getItemTitle = (type, item) => {
@@ -232,18 +283,24 @@ const getItemSubtitleParts = (type, item) => {
     .filter(part => part.value)
 }
 
-const getCertificationParts = (item) => ['issuer', 'level', 'date']
-  .map(field => ({ field, value: item[field] }))
-  .filter(part => part.value)
+const getCertificationParts = (item) => [
+  { field: 'issuer', value: item.issuer },
+  { field: 'level', value: item.level },
+  { field: 'date', value: getItemPeriod(item) }
+].filter(part => part.value)
 </script>
 
 <style scoped lang="scss">
 .resume-stage {
   position: relative;
+  user-select: text;
+  -webkit-user-select: text;
 }
 
 .resume-canvas {
   transform-origin: top left;
+  user-select: text;
+  -webkit-user-select: text;
 }
 
 .resume-paper {
@@ -257,6 +314,25 @@ const getCertificationParts = (item) => ['issuer', 'level', 'date']
   font-size: var(--resume-base-size);
   line-height: var(--resume-line-height);
   box-sizing: border-box;
+  user-select: text;
+  -webkit-user-select: text;
+  cursor: text;
+
+  :is(h1, h2, h3, p, span, strong, b, em, a) {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    user-select: text;
+    -webkit-user-select: text;
+  }
+}
+
+.resume-header,
+.item-top,
+.skill-head,
+.simple-item {
+  > * {
+    min-width: 0;
+  }
 }
 
 .resume-header {
@@ -281,7 +357,7 @@ const getCertificationParts = (item) => ['issuer', 'level', 'date']
   h1 {
     margin: 0;
     color: #111827;
-    font-size: 34px;
+    font-size: var(--resume-name-size);
     line-height: 1.1;
     font-weight: 850;
     letter-spacing: 0;
@@ -290,7 +366,7 @@ const getCertificationParts = (item) => ['issuer', 'level', 'date']
   p {
     margin-top: 8px;
     color: var(--accent);
-    font-size: 16px;
+    font-size: var(--resume-position-size);
     font-weight: 800;
   }
 }
@@ -334,7 +410,7 @@ const getCertificationParts = (item) => ['issuer', 'level', 'date']
   gap: 7px 14px;
   align-items: start;
   color: #4b5563;
-  font-size: 11.5px;
+  font-size: var(--resume-contact-size);
 }
 
 .contact-item {
@@ -426,7 +502,7 @@ const getCertificationParts = (item) => ['issuer', 'level', 'date']
 .paragraph {
   margin: 0;
   color: #374151;
-  font-size: 13px;
+  font-size: var(--resume-base-size);
   white-space: pre-line;
 }
 
@@ -438,11 +514,13 @@ const getCertificationParts = (item) => ['issuer', 'level', 'date']
 .timeline-item {
   padding-left: 0;
   border-left: none;
+  min-width: 0;
 }
 
 .item-top {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
   gap: 20px;
 
   h3 {
@@ -455,14 +533,27 @@ const getCertificationParts = (item) => ['issuer', 'level', 'date']
   p {
     margin-top: 4px;
     color: #4b5563;
-    font-size: 13px;
+    font-size: var(--resume-meta-size);
   }
 
   > span {
-    flex: 0 0 auto;
     color: #6b7280;
-    font-size: 12px;
+    font-size: var(--resume-meta-size);
   }
+}
+
+.item-main,
+.item-subtitle {
+  min-width: 0;
+}
+
+.item-period {
+  align-self: start;
+  justify-self: end;
+  max-width: 168px;
+  line-height: 1.45;
+  text-align: right;
+  white-space: normal;
 }
 
 .inline-parts {
@@ -476,7 +567,7 @@ const getCertificationParts = (item) => ['issuer', 'level', 'date']
 .description {
   margin-top: var(--resume-paragraph-gap);
   color: #374151;
-  font-size: 13px;
+  font-size: var(--resume-base-size);
   white-space: pre-line;
 
   &.strong {
@@ -525,7 +616,7 @@ const getCertificationParts = (item) => ['issuer', 'level', 'date']
   display: inline-block;
   margin-top: 8px;
   color: var(--accent);
-  font-size: 12px;
+  font-size: var(--resume-link-size);
   font-weight: 800;
   word-break: break-all;
   text-decoration: none;
@@ -533,23 +624,24 @@ const getCertificationParts = (item) => ['issuer', 'level', 'date']
 
 .skill-list {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px 18px;
 }
 
 .skill-head {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
   gap: 10px;
   margin-bottom: 6px;
 
   strong {
-    font-size: 13px;
+    font-size: var(--resume-base-size);
   }
 
   span {
     color: #6b7280;
-    font-size: 12px;
+    font-size: var(--resume-meta-size);
   }
 }
 
@@ -570,7 +662,7 @@ const getCertificationParts = (item) => ['issuer', 'level', 'date']
 .skill-desc {
   margin: 7px 0 0;
   color: #4b5563;
-  font-size: 12px;
+  font-size: var(--resume-meta-size);
   line-height: 1.5;
 }
 
@@ -580,19 +672,24 @@ const getCertificationParts = (item) => ['issuer', 'level', 'date']
 }
 
 .simple-item {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
   gap: 16px;
   padding-bottom: 8px;
   border-bottom: 1px dashed #e5e7eb;
 
   strong {
-    font-size: 13px;
+    font-size: var(--resume-base-size);
   }
 
   span {
     color: #6b7280;
-    font-size: 12px;
+    font-size: var(--resume-meta-size);
+  }
+
+  .inline-parts {
+    text-align: right;
   }
 }
 

@@ -108,15 +108,21 @@ const exportPdf = async () => {
     color: #111827;
     font-size: 16px;
   }
+
+  > div:first-child {
+    min-width: 0;
+  }
 }
 
 .actions {
+  min-width: 0;
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-end;
   gap: 8px;
 
   button {
+    max-width: 100%;
     min-height: 36px;
     padding: 0 14px;
     border: 1px solid #e5e7eb;
@@ -125,6 +131,8 @@ const exportPdf = async () => {
     color: #111827;
     font-weight: 800;
     cursor: pointer;
+    white-space: normal;
+    text-align: center;
 
     &.primary {
       border-color: #111827;

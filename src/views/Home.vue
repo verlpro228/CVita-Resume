@@ -472,7 +472,7 @@ onBeforeUnmount(() => {
     line-height: 1.08;
     font-weight: 820;
     letter-spacing: 0;
-    white-space: nowrap;
+    white-space: normal;
   }
 
   p {
@@ -730,6 +730,8 @@ onBeforeUnmount(() => {
 }
 
 .showcase-copy {
+  min-width: 0;
+
   .product-badge {
     min-height: 30px;
     color: #111827;
@@ -760,6 +762,7 @@ onBeforeUnmount(() => {
   margin-top: 48px;
 
   button {
+    min-width: 0;
     position: relative;
     min-height: 72px;
     display: grid;
@@ -1091,7 +1094,7 @@ onBeforeUnmount(() => {
     min-height: 64px;
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     gap: 18px;
     padding: 0 20px;
     border: none;
@@ -1101,6 +1104,8 @@ onBeforeUnmount(() => {
     cursor: pointer;
 
     strong {
+      flex: 1 1 auto;
+      min-width: 0;
       font-size: 16px;
     }
 
@@ -1133,6 +1138,10 @@ onBeforeUnmount(() => {
   strong,
   span {
     display: block;
+  }
+
+  > div {
+    min-width: 0;
   }
 
   span {

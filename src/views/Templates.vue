@@ -215,6 +215,7 @@ onMounted(async () => {
 }
 
 .template-info {
+  min-width: 0;
   display: grid;
   gap: 16px;
   padding: 20px;
@@ -235,6 +236,10 @@ onMounted(async () => {
     line-height: 1.7;
     font-size: 14px;
   }
+
+  > div:first-child {
+    min-width: 0;
+  }
 }
 
 .tag-list {
@@ -253,10 +258,12 @@ onMounted(async () => {
 }
 
 .template-actions {
+  min-width: 0;
   display: flex;
   gap: 10px;
 
   button {
+    min-width: 0;
     min-height: 42px;
     flex: 1;
     border: 1px solid rgba(17, 24, 39, 0.08);
@@ -265,6 +272,8 @@ onMounted(async () => {
     color: #111827;
     font-weight: 900;
     cursor: pointer;
+    white-space: normal;
+    text-align: center;
 
     &.primary {
       border: none;
@@ -282,7 +291,7 @@ onMounted(async () => {
 }
 
 @media (max-width: 700px) {
-  .template-hero h1 {
+  .templates-hero h1 {
     font-size: 34px;
   }
 

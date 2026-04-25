@@ -202,23 +202,41 @@
               <span>行高 <b>{{ resume.theme.lineHeight }}</b></span>
               <input v-model.number="resume.theme.lineHeight" type="range" min="1.2" max="1.9" step="0.05" />
             </label>
-            <label class="control-field">
-              <span>基础字号</span>
-              <select v-model.number="resume.theme.baseFontSize">
-                <option v-for="size in baseFontSizes" :key="size" :value="size">{{ size }}px</option>
-              </select>
+            <label class="control-field range-field">
+              <span>全局文字缩放 <b>{{ resume.theme.textScale }}%</b></span>
+              <input v-model.number="resume.theme.textScale" type="range" min="80" max="150" step="1" />
             </label>
-            <label class="control-field">
-              <span>模块标题字号</span>
-              <select v-model.number="resume.theme.sectionTitleSize">
-                <option v-for="size in titleFontSizes" :key="size" :value="size">{{ size }}px</option>
-              </select>
+            <label class="control-field range-field">
+              <span>正文字号 <b>{{ resume.theme.baseFontSize }}px</b></span>
+              <input v-model.number="resume.theme.baseFontSize" type="range" min="11" max="18" step="1" />
             </label>
-            <label class="control-field">
-              <span>一级标题字号</span>
-              <select v-model.number="resume.theme.itemTitleSize">
-                <option v-for="size in itemFontSizes" :key="size" :value="size">{{ size }}px</option>
-              </select>
+            <label class="control-field range-field">
+              <span>模块标题字号 <b>{{ resume.theme.sectionTitleSize }}px</b></span>
+              <input v-model.number="resume.theme.sectionTitleSize" type="range" min="14" max="24" step="1" />
+            </label>
+            <label class="control-field range-field">
+              <span>一级标题字号 <b>{{ resume.theme.itemTitleSize }}px</b></span>
+              <input v-model.number="resume.theme.itemTitleSize" type="range" min="13" max="22" step="1" />
+            </label>
+            <label class="control-field range-field">
+              <span>姓名字号 <b>{{ resume.theme.nameFontSize }}px</b></span>
+              <input v-model.number="resume.theme.nameFontSize" type="range" min="26" max="42" step="1" />
+            </label>
+            <label class="control-field range-field">
+              <span>岗位字号 <b>{{ resume.theme.positionFontSize }}px</b></span>
+              <input v-model.number="resume.theme.positionFontSize" type="range" min="12" max="24" step="1" />
+            </label>
+            <label class="control-field range-field">
+              <span>联系方式字号 <b>{{ resume.theme.contactFontSize }}px</b></span>
+              <input v-model.number="resume.theme.contactFontSize" type="range" min="10" max="18" step="1" />
+            </label>
+            <label class="control-field range-field">
+              <span>辅助信息字号 <b>{{ resume.theme.metaFontSize }}px</b></span>
+              <input v-model.number="resume.theme.metaFontSize" type="range" min="10" max="18" step="1" />
+            </label>
+            <label class="control-field range-field">
+              <span>链接字号 <b>{{ resume.theme.linkFontSize }}px</b></span>
+              <input v-model.number="resume.theme.linkFontSize" type="range" min="10" max="18" step="1" />
             </label>
           </section>
 
@@ -271,7 +289,7 @@
         <div class="panel-title">
           <div><span>Resume Editor</span><h1>{{ currentPanelTitle }}</h1></div>
           <button v-if="activePanel === 'basics'" type="button" class="ai-mini" @click="openAi('basicSummary')">AI 润色简介</button>
-          <button v-else-if="selectedSection?.type === 'summary' || selectedSection?.type === 'custom'" type="button" class="ai-mini" @click="openAi('sectionContent', selectedSection)">AI 优化内容</button>
+          <button v-else-if="selectedSection?.type === 'summary' || selectedSection?.type === 'custom' || selectedSection?.type === 'skills'" type="button" class="ai-mini" @click="openAi('sectionContent', selectedSection)">AI 优化内容</button>
         </div>
 
         <div v-if="activePanel === 'basics'" class="form-card">
@@ -338,8 +356,16 @@
             <label class="switch-row"><input v-model="selectedSection.visible" type="checkbox" /><span>在预览中显示</span></label>
           </div>
 
-          <template v-if="selectedSection.type === 'summary' || selectedSection.type === 'custom'">
-            <label class="field"><span>模块内容</span><textarea v-model="selectedSection.content" rows="9" placeholder="请输入模块内容，支持多行文本" @input="autoGrow"></textarea></label>
+          <template v-if="selectedSection.type === 'summary' || selectedSection.type === 'custom' || selectedSection.type === 'skills'">
+            <label class="field">
+              <span>{{ selectedSection.type === 'skills' ? '技能描述' : '模块内容' }}</span>
+              <textarea
+                v-model="selectedSection.content"
+                :rows="selectedSection.type === 'skills' ? 8 : 9"
+                :placeholder="selectedSection.type === 'skills' ? '请输入技能特长描述，例如掌握的技术、能力方向和实践经验' : '请输入模块内容，支持多行文本'"
+                @input="autoGrow"
+              ></textarea>
+            </label>
           </template>
 
           <template v-else>
@@ -394,14 +420,6 @@
                 <label class="field full"><span>个人职责</span><textarea v-model="item.responsibility" rows="3" @input="autoGrow"></textarea></label>
                 <label class="field full"><span>项目亮点</span><textarea v-model="item.highlights" rows="3" @input="autoGrow"></textarea></label>
                 <button type="button" class="ai-inline" @click="openAi('projectHighlight', selectedSection, item)">AI 优化项目亮点</button>
-              </div>
-
-              <div v-else-if="selectedSection.type === 'skills'" class="field-grid two">
-                <label class="field"><span>技能名称</span><input v-model.trim="item.name" placeholder="Vue 3" /></label>
-                <label class="field"><span>分类</span><input v-model.trim="item.category" placeholder="框架 / 工程化" /></label>
-                <label class="field"><span>熟练度</span><input v-model.number="item.level" max="100" min="0" type="range" /></label>
-                <label class="field"><span>数值</span><input v-model.number="item.level" max="100" min="0" type="number" /></label>
-                <label class="field full"><span>描述</span><textarea v-model="item.description" rows="3" @input="autoGrow"></textarea></label>
               </div>
 
               <div v-else-if="selectedSection.type === 'certifications'" class="field-grid two">
@@ -548,9 +566,6 @@ const fontOptions = [
   { label: '衬线正式', value: 'serif' },
   { label: '等宽技术', value: 'mono' }
 ]
-const baseFontSizes = [12, 13, 14, 15, 16]
-const titleFontSizes = [14, 15, 16, 17, 18, 19, 20]
-const itemFontSizes = [14, 15, 16, 17, 18]
 const profileLayoutOptions = [
   { label: '头像左侧，联系信息双列', value: 'balanced' },
   { label: '居中名片式', value: 'centered' },
@@ -1135,6 +1150,10 @@ const applyAiResult = (mode) => {
   margin-bottom: 14px;
   padding: 10px 12px;
   border-radius: 26px;
+
+  > * {
+    min-width: 0;
+  }
 }
 
 button,
@@ -1198,6 +1217,7 @@ button:not(:disabled):hover {
 }
 
 .title-input {
+  min-width: 0;
   display: grid;
   gap: 4px;
   padding: 8px 12px;
@@ -1255,6 +1275,10 @@ button:not(:disabled):hover {
   font-weight: 850;
   box-shadow: 0 12px 32px rgba(43, 73, 124, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(18px) saturate(150%);
+}
+
+.template-trigger span {
+  min-width: 0;
 }
 
 .template-trigger svg {
@@ -1334,6 +1358,7 @@ button:not(:disabled):hover {
 }
 
 .toolbar-actions {
+  min-width: 0;
   display: flex;
   justify-content: flex-end;
   flex-wrap: wrap;
@@ -1341,8 +1366,11 @@ button:not(:disabled):hover {
 }
 
 .toolbar-actions button {
+  max-width: 100%;
   min-height: 40px;
   padding: 0 14px;
+  white-space: normal;
+  text-align: center;
 }
 
 .toolbar-actions .primary {
@@ -1537,6 +1565,10 @@ button:not(:disabled):hover {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+
+  > * {
+    min-width: 0;
+  }
 }
 
 .rail-head strong {
@@ -1548,9 +1580,9 @@ button:not(:disabled):hover {
   width: 100%;
   min-height: 46px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 10px;
-  padding: 0 12px;
+  padding: 10px 12px;
   text-align: left;
 }
 
@@ -1619,9 +1651,12 @@ button:not(:disabled):hover {
 }
 
 .module-name b {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  flex: 1 1 auto;
+  min-width: 0;
+  line-height: 1.4;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
 }
 
 .drag-handle {
@@ -1662,6 +1697,7 @@ button:not(:disabled):hover {
   color: #64748b;
   font-size: 12px;
   font-weight: 900;
+  white-space: normal;
 }
 
 .add-section,
@@ -2218,10 +2254,13 @@ button:not(:disabled):hover {
 
 .item-head strong {
   color: #111827;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .item-head div {
   display: flex;
+  min-width: 0;
   gap: 6px;
 }
 

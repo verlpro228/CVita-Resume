@@ -65,9 +65,15 @@ export const createDefaultTheme = (templateId = 'modern') => ({
   density: 'comfortable',
   fontFamily: 'system',
   lineHeight: 1.5,
+  textScale: 100,
   baseFontSize: 13,
   sectionTitleSize: 16,
   itemTitleSize: 15,
+  nameFontSize: 34,
+  positionFontSize: 16,
+  contactFontSize: 12,
+  metaFontSize: 12,
+  linkFontSize: 12,
   pagePaddingX: 62,
   pagePaddingY: 56,
   sectionGap: 28,
@@ -133,9 +139,6 @@ export const createItemByType = (type) => {
     },
     skills: {
       id: createId('skill'),
-      name: '',
-      category: '前端',
-      level: 80,
       description: ''
     },
     certifications: {
@@ -172,7 +175,7 @@ export const createSection = (type) => {
     visible: true
   }
 
-  if (type === 'summary' || type === 'custom') {
+  if (type === 'summary' || type === 'custom' || type === 'skills') {
     section.content = ''
   } else {
     section.items = [createItemByType(type)]
@@ -261,12 +264,8 @@ export const createDemoResume = (templateId = 'modern') => ({
       type: 'skills',
       title: '技能特长',
       visible: true,
-      items: [
-        { id: createId('skill-item'), name: 'Vue 3 / Composition API', category: '框架', level: 88, description: '熟悉组合式 API、组件拆分和响应式状态管理。' },
-        { id: createId('skill-item'), name: 'JavaScript / ES6+', category: '基础', level: 86, description: '熟悉模块化、异步流程、DOM 与浏览器 API。' },
-        { id: createId('skill-item'), name: 'Vite / 工程化', category: '工程化', level: 80, description: '了解构建配置、静态资源处理和性能优化。' },
-        { id: createId('skill-item'), name: 'Element Plus', category: '组件库', level: 82, description: '可快速搭建表单、弹窗、列表和工具型后台界面。' }
-      ]
+      content:
+        '熟悉 Vue 3、JavaScript、Vite 与 Element Plus，能够独立完成模块拆分、状态管理、工程化配置和中后台界面开发。'
     },
     {
       id: createId('cert'),
@@ -319,7 +318,7 @@ export const createEmptyResume = (templateId = 'modern') => ({
     { ...createSection('education'), items: [] },
     { ...createSection('experience'), items: [] },
     { ...createSection('projects'), items: [] },
-    { ...createSection('skills'), items: [] },
+    { ...createSection('skills'), content: '' },
     { ...createSection('summary'), content: '' }
   ],
   meta: {
@@ -327,6 +326,59 @@ export const createEmptyResume = (templateId = 'modern') => ({
     updatedAt: new Date().toISOString()
   }
 })
+
+const normalizeTextValue = (value) => String(value ?? '').trim()
+
+const pickFirstFilled = (...values) => values
+  .map(normalizeTextValue)
+  .find(Boolean) || ''
+
+const joinDateRange = (start, end) => {
+  const normalizedStart = normalizeTextValue(start)
+  const normalizedEnd = normalizeTextValue(end)
+
+  if (normalizedStart && normalizedEnd) return `${normalizedStart} - ${normalizedEnd}`
+  return normalizedStart || normalizedEnd
+}
+
+const getCompatiblePeriodValue = (item = {}) => pickFirstFilled(
+  item.period,
+  item.date,
+  item.time,
+  item.duration,
+  item.timeRange,
+  item.time_range,
+  item.range,
+  joinDateRange(item.startDate, item.endDate),
+  joinDateRange(item.start, item.end),
+  joinDateRange(item.from, item.to),
+  joinDateRange(item.begin, item.finish)
+)
+
+const normalizeItemFields = (type, item) => {
+  const normalizedItem = { ...item }
+
+  if (['education', 'experience', 'projects', 'campus'].includes(type)) {
+    normalizedItem.period = pickFirstFilled(normalizedItem.period, getCompatiblePeriodValue(normalizedItem))
+  }
+
+  if (['certifications', 'awards'].includes(type)) {
+    normalizedItem.date = pickFirstFilled(normalizedItem.date, getCompatiblePeriodValue(normalizedItem))
+  }
+
+  return normalizedItem
+}
+
+const getSkillsContentFromItems = (items = []) => items
+  .map((item = {}) => {
+    const title = pickFirstFilled(item.name)
+    const description = pickFirstFilled(item.description, item.category)
+
+    if (title && description && description !== title) return `${title}: ${description}`
+    return title || description
+  })
+  .filter(Boolean)
+  .join('\n')
 
 export const normalizeResume = (input) => {
   const fallback = createDemoResume()
@@ -346,8 +398,14 @@ export const normalizeResume = (input) => {
       return merged
     }
 
+    if (merged.type === 'skills') {
+      merged.content = pickFirstFilled(section?.content, getSkillsContentFromItems(section?.items), merged.content)
+      merged.items = []
+      return merged
+    }
+
     merged.items = Array.isArray(section?.items)
-      ? section.items.map(item => ({ ...createItemByType(merged.type), ...item }))
+      ? section.items.map(item => normalizeItemFields(merged.type, { ...createItemByType(merged.type), ...item }))
       : []
     return merged
   }
