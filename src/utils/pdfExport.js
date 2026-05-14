@@ -5,15 +5,71 @@ export const exportResumePaperToPdf = async ({ paper, html2canvas, jsPDF, filena
     await document.fonts.ready
   }
 
+  const buildCssUrl = (value = '') => {
+    const normalized = String(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\r?\n/g, '')
+    return `url("${normalized}")`
+  }
+
+  const preloadImage = (src = '') => new Promise((resolve) => {
+    if (!src) {
+      resolve()
+      return
+    }
+
+    const image = new Image()
+    if (/^https?:/i.test(src)) {
+      image.crossOrigin = 'anonymous'
+    }
+    image.onload = resolve
+    image.onerror = resolve
+    image.src = src
+  })
+
+  const applyAvatarFallback = (root) => {
+    root.querySelectorAll('.avatar[data-avatar-src]').forEach((node) => {
+      const src = node.getAttribute('data-avatar-src') || ''
+      if (!src) return
+
+      Object.assign(node.style, {
+        backgroundImage: buildCssUrl(src),
+        backgroundPosition: 'center center',
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover'
+      })
+    })
+
+    root.querySelectorAll('.avatar img').forEach((node) => {
+      Object.assign(node.style, {
+        position: 'absolute',
+        inset: '0',
+        display: 'block',
+        width: 'auto',
+        height: 'auto',
+        minWidth: '100%',
+        minHeight: '100%',
+        maxWidth: 'none',
+        maxHeight: 'none',
+        objectFit: 'cover',
+        objectPosition: 'center center',
+        borderRadius: 'inherit'
+      })
+    })
+  }
+
   const waitForImages = async (root) => {
     const images = Array.from(root.querySelectorAll('img'))
-    await Promise.all(images.map((image) => {
-      if (image.complete && image.naturalWidth > 0) return Promise.resolve()
-      return new Promise((resolve) => {
-        image.onload = resolve
-        image.onerror = resolve
-      })
-    }))
+    const avatars = Array.from(root.querySelectorAll('.avatar[data-avatar-src]'))
+
+    await Promise.all([
+      ...images.map((image) => {
+        if (image.complete && image.naturalWidth > 0) return Promise.resolve()
+        return new Promise((resolve) => {
+          image.onload = resolve
+          image.onerror = resolve
+        })
+      }),
+      ...avatars.map((node) => preloadImage(node.getAttribute('data-avatar-src') || ''))
+    ])
   }
 
   const wrapper = document.createElement('div')
@@ -58,14 +114,17 @@ export const exportResumePaperToPdf = async ({ paper, html2canvas, jsPDF, filena
       overflow: hidden !important;
       border-radius: 999px !important;
       clip-path: none !important;
+      background-position: center center !important;
+      background-repeat: no-repeat !important;
+      background-size: cover !important;
     }
 
     .pdf-export-mode .avatar img {
       position: absolute !important;
       inset: 0 !important;
       display: block !important;
-      width: 100% !important;
-      height: 100% !important;
+      width: auto !important;
+      height: auto !important;
       max-width: none !important;
       max-height: none !important;
       min-width: 100% !important;
@@ -84,8 +143,8 @@ export const exportResumePaperToPdf = async ({ paper, html2canvas, jsPDF, filena
     .pdf-export-mode .contact-item b {
       white-space: normal !important;
       text-overflow: clip !important;
-      overflow-wrap: anywhere !important;
-      word-break: break-word !important;
+      overflow-wrap: break-word !important;
+      word-break: normal !important;
       line-height: 1.32 !important;
     }
   `
@@ -106,22 +165,7 @@ export const exportResumePaperToPdf = async ({ paper, html2canvas, jsPDF, filena
     })
   })
 
-  clone.querySelectorAll('.avatar img').forEach((node) => {
-    Object.assign(node.style, {
-      position: 'absolute',
-      inset: '0',
-      display: 'block',
-      width: '100%',
-      height: '100%',
-      maxWidth: 'none',
-      maxHeight: 'none',
-      minWidth: '100%',
-      minHeight: '100%',
-      objectFit: 'cover',
-      objectPosition: 'center center',
-      borderRadius: 'inherit'
-    })
-  })
+  applyAvatarFallback(clone)
 
   wrapper.appendChild(exportStyle)
   wrapper.appendChild(clone)
@@ -142,7 +186,13 @@ export const exportResumePaperToPdf = async ({ paper, html2canvas, jsPDF, filena
       windowWidth: paperWidth,
       windowHeight: paperHeight,
       scrollX: 0,
-      scrollY: 0
+      scrollY: 0,
+      onclone: (clonedDocument) => {
+        const clonedRoot = clonedDocument.querySelector('.pdf-export-mode')
+        if (!clonedRoot) return
+
+        applyAvatarFallback(clonedRoot)
+      }
     })
 
     const imageData = canvas.toDataURL('image/png')

@@ -1,10 +1,11 @@
 <template>
   <div
     class="resume-stage"
-    :style="{ width: `${paperWidth * scale}px`, minHeight: `${paperHeight * scale}px` }"
+    :style="stageStyle"
   >
-    <div class="resume-canvas" :style="{ transform: `scale(${scale})` }">
+    <div class="resume-canvas" :style="canvasStyle">
       <article
+        ref="paperRef"
         class="resume-paper"
         :class="[
           `template-${resume.templateId || 'modern'}`,
@@ -20,16 +21,21 @@
       >
         <header class="resume-header">
           <div class="identity">
-            <div v-if="resume.basics?.avatar" class="avatar">
-              <img :src="resume.basics.avatar" alt="avatar" />
-            </div>
+            <div
+              v-if="resume.basics?.avatar"
+              class="avatar avatar-background"
+              :data-avatar-src="resume.basics.avatar"
+              :style="avatarStyle"
+              role="img"
+              aria-label="avatar"
+            ></div>
             <div>
               <h1 v-html="formatInlineText(resume.basics?.name || '姓名')"></h1>
               <p v-html="formatInlineText(resume.basics?.position || '职位意向')"></p>
             </div>
           </div>
           <div class="contacts">
-            <span v-for="item in contactItems" :key="item.key" class="contact-item">
+            <span v-for="item in contactItems" :key="item.key" class="contact-item" :class="{ wide: item.wide }">
               <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true">
                 <path fill="currentColor" :d="contactIconPaths[item.icon]" />
               </svg>
@@ -105,7 +111,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { createDefaultTheme, templateCatalog } from '@/data/resumeBuilder'
 
 const props = defineProps({
@@ -121,6 +127,9 @@ const props = defineProps({
 
 const paperWidth = 794
 const paperHeight = 1123
+const paperRef = ref(null)
+const measuredPaperHeight = ref(paperHeight)
+let paperResizeObserver = null
 
 const activeTemplate = computed(() => {
   return templateCatalog.find(item => item.id === props.resume.templateId) || templateCatalog[0]
@@ -163,6 +172,27 @@ const previewStyle = computed(() => ({
   '--resume-item-gap': `${themeSettings.value.itemGap}px`,
   '--resume-paragraph-gap': `${themeSettings.value.paragraphGap}px`
 }))
+const avatarStyle = computed(() => {
+  const avatar = String(props.resume.basics?.avatar || '').trim()
+  if (!avatar) return null
+
+  return {
+    backgroundImage: buildCssUrl(avatar)
+  }
+})
+
+const previewBleed = computed(() => Math.max(6, Math.round(18 * props.scale)))
+const stageStyle = computed(() => ({
+  width: `${Math.ceil(paperWidth * props.scale + previewBleed.value * 2)}px`,
+  minHeight: `${Math.ceil(measuredPaperHeight.value * props.scale + previewBleed.value * 2)}px`
+}))
+const canvasStyle = computed(() => ({
+  top: `${previewBleed.value}px`,
+  left: `${previewBleed.value}px`,
+  width: `${paperWidth}px`,
+  minHeight: `${measuredPaperHeight.value}px`,
+  transform: `scale(${props.scale})`
+}))
 
 const escapeHtml = (value = '') => String(value)
   .replace(/&/g, '&amp;')
@@ -170,6 +200,11 @@ const escapeHtml = (value = '') => String(value)
   .replace(/>/g, '&gt;')
   .replace(/"/g, '&quot;')
   .replace(/'/g, '&#39;')
+
+const buildCssUrl = (value = '') => {
+  const normalized = String(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\r?\n/g, '')
+  return `url("${normalized}")`
+}
 
 const formatInlineText = (value = '') => escapeHtml(value)
   .replace(/\*\*([\s\S]+?)\*\*/g, '<strong>$1</strong>')
@@ -214,12 +249,12 @@ const contactIconPaths = {
 const contactItems = computed(() => {
   const basics = props.resume.basics || {}
   return [
-    { key: 'email', icon: 'email', value: basics.email },
     { key: 'phone', icon: 'phone', value: basics.phone },
     { key: 'city', icon: 'location', value: basics.city },
-    { key: 'address', icon: 'location', value: basics.address },
-    { key: 'website', icon: 'link', value: basics.website },
-    { key: 'github', icon: 'link', value: basics.github }
+    { key: 'address', icon: 'location', value: basics.address, wide: true },
+    { key: 'email', icon: 'email', value: basics.email, wide: true },
+    { key: 'website', icon: 'link', value: basics.website, wide: true },
+    { key: 'github', icon: 'link', value: basics.github, wide: true }
   ].filter(item => item.value)
 })
 
@@ -288,16 +323,60 @@ const getCertificationParts = (item) => [
   { field: 'level', value: item.level },
   { field: 'date', value: getItemPeriod(item) }
 ].filter(part => part.value)
+
+const syncPaperHeight = () => {
+  if (!paperRef.value) return
+  measuredPaperHeight.value = Math.max(
+    paperHeight,
+    Math.ceil(paperRef.value.scrollHeight || paperRef.value.offsetHeight || paperHeight)
+  )
+}
+
+watch(
+  () => props.resume,
+  () => {
+    nextTick(syncPaperHeight)
+  },
+  { deep: true }
+)
+
+watch(
+  () => props.scale,
+  () => {
+    nextTick(syncPaperHeight)
+  }
+)
+
+onMounted(async () => {
+  await nextTick()
+  syncPaperHeight()
+
+  if (document.fonts?.ready) {
+    document.fonts.ready.then(() => nextTick(syncPaperHeight))
+  }
+
+  if (typeof ResizeObserver !== 'undefined' && paperRef.value) {
+    paperResizeObserver = new ResizeObserver(() => syncPaperHeight())
+    paperResizeObserver.observe(paperRef.value)
+  }
+})
+
+onBeforeUnmount(() => {
+  paperResizeObserver?.disconnect()
+})
 </script>
 
 <style scoped lang="scss">
 .resume-stage {
   position: relative;
+  overflow: hidden;
   user-select: text;
   -webkit-user-select: text;
 }
 
 .resume-canvas {
+  position: absolute;
+  inset: 0 auto auto 0;
   transform-origin: top left;
   user-select: text;
   -webkit-user-select: text;
@@ -385,28 +464,22 @@ const getCertificationParts = (item) => [
   border: 3px solid rgba(0, 0, 0, 0.08);
   clip-path: circle(50% at 50% 50%);
   background: #f8fafc;
+}
 
-  img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    max-width: none;
-    max-height: none;
-    display: block;
-    object-fit: cover;
-    object-position: center center;
-    border-radius: 50%;
-  }
+.avatar-background {
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .contacts {
   width: 100%;
-  max-width: 370px;
+  max-width: 392px;
   min-width: 0;
   justify-self: end;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-flow: row dense;
   gap: 7px 14px;
   align-items: start;
   color: #4b5563;
@@ -422,6 +495,10 @@ const getCertificationParts = (item) => [
   color: #1f2937;
   line-height: 1.32;
   overflow: visible;
+
+  &.wide {
+    grid-column: 1 / -1;
+  }
 
   svg {
     flex: 0 0 13px;
@@ -439,8 +516,8 @@ const getCertificationParts = (item) => [
     font-weight: 520;
     text-overflow: clip;
     white-space: normal;
-    overflow-wrap: anywhere;
-    word-break: break-word;
+    overflow-wrap: break-word;
+    word-break: normal;
   }
 }
 
