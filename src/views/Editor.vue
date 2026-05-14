@@ -124,9 +124,35 @@
           </div>
         </div>
         <div class="add-section">
-          <select v-model="sectionToAdd">
-            <option v-for="definition in sectionDefinitions" :key="definition.type" :value="definition.type">{{ definition.title }}</option>
-          </select>
+          <div class="template-picker" @click.stop>
+            <button
+              type="button"
+              class="template-trigger"
+              :class="{ open: sectionMenuOpen }"
+              aria-haspopup="listbox"
+              :aria-expanded="sectionMenuOpen"
+              @click="toggleSectionMenu"
+            >
+              <span>{{ activeSectionDefinition.title }}</span>
+              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+                <path fill="currentColor" d="M7.4 8.6 12 13.2l4.6-4.6L18 10l-6 6-6-6 1.4-1.4z" />
+              </svg>
+            </button>
+            <div v-if="sectionMenuOpen" ref="sectionMenuRef" class="template-menu section-menu" role="listbox">
+              <button
+                v-for="definition in sectionDefinitions"
+                :key="definition.type"
+                type="button"
+                class="template-option"
+                :class="{ active: sectionToAdd === definition.type }"
+                role="option"
+                :aria-selected="sectionToAdd === definition.type"
+                @click="chooseSectionToAdd(definition.type)"
+              >
+                <span>{{ definition.title }}</span>
+              </button>
+            </div>
+          </div>
           <button type="button" @click="addSection(sectionToAdd)">添加模块</button>
         </div>
         <div class="danger-zone">
@@ -542,6 +568,7 @@ const isExporting = ref(false)
 const sectionToAdd = ref('education')
 const templateMenuOpen = ref(false)
 const exportMenuOpen = ref(false)
+const sectionMenuOpen = ref(false)
 const fileInput = ref(null)
 const shellRef = ref(null)
 const topbarRef = ref(null)
@@ -550,6 +577,7 @@ const formRef = ref(null)
 const previewRef = ref(null)
 const templateMenuRef = ref(null)
 const exportMenuRef = ref(null)
+const sectionMenuRef = ref(null)
 const aiRef = ref(null)
 const aiDrawer = ref(false)
 const aiLoading = ref(false)
@@ -656,6 +684,9 @@ const moduleIconMap = {
 
 const selectedSection = computed(() => resume.value.sections.find(section => section.id === activePanel.value))
 const activeTemplate = computed(() => getTemplate(resume.value.templateId))
+const activeSectionDefinition = computed(() => {
+  return sectionDefinitions.find(definition => definition.type === sectionToAdd.value) || sectionDefinitions[0]
+})
 const adaptiveEditorLayout = computed(() => {
   const layout = { ...editorLayout.value }
   if (viewportWidth.value <= 760) {
@@ -823,6 +854,7 @@ const toggleTemplateMenu = () => {
   templateMenuOpen.value = !templateMenuOpen.value
   if (templateMenuOpen.value) {
     exportMenuOpen.value = false
+    sectionMenuOpen.value = false
     nextTick(() => {
       if (templateMenuRef.value) {
         gsap.fromTo(templateMenuRef.value, { opacity: 0, y: -8, scale: 0.98 }, { opacity: 1, y: 0, scale: 1, duration: 0.22, ease: 'power2.out' })
@@ -839,6 +871,7 @@ const toggleExportMenu = () => {
   exportMenuOpen.value = !exportMenuOpen.value
   if (exportMenuOpen.value) {
     templateMenuOpen.value = false
+    sectionMenuOpen.value = false
     nextTick(() => {
       if (exportMenuRef.value) {
         gsap.fromTo(exportMenuRef.value, { opacity: 0, y: -8, scale: 0.98 }, { opacity: 1, y: 0, scale: 1, duration: 0.22, ease: 'power2.out' })
@@ -851,14 +884,37 @@ const closeExportMenu = () => {
   exportMenuOpen.value = false
 }
 
+const toggleSectionMenu = () => {
+  sectionMenuOpen.value = !sectionMenuOpen.value
+  if (sectionMenuOpen.value) {
+    templateMenuOpen.value = false
+    exportMenuOpen.value = false
+    nextTick(() => {
+      if (sectionMenuRef.value) {
+        gsap.fromTo(sectionMenuRef.value, { opacity: 0, y: -8, scale: 0.98 }, { opacity: 1, y: 0, scale: 1, duration: 0.22, ease: 'power2.out' })
+      }
+    })
+  }
+}
+
+const closeSectionMenu = () => {
+  sectionMenuOpen.value = false
+}
+
 const closeFloatingMenus = () => {
   closeTemplateMenu()
   closeExportMenu()
+  closeSectionMenu()
 }
 
 const chooseTemplate = (templateId) => {
   applyTemplate(templateId)
   closeTemplateMenu()
+}
+
+const chooseSectionToAdd = (sectionType) => {
+  sectionToAdd.value = sectionType
+  closeSectionMenu()
 }
 
 const runExport = (type) => {
@@ -1710,6 +1766,16 @@ button:not(:disabled):hover {
 .add-section select {
   min-height: 42px;
   padding: 0 12px;
+}
+
+.add-section .template-picker {
+  width: 100%;
+  min-width: 0;
+}
+
+.section-menu {
+  max-height: min(320px, 54vh);
+  overflow-y: auto;
 }
 
 .add-section button,
